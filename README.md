@@ -54,5 +54,3 @@ MIT License © 2026 Buvamithra Ulagarajan
 ---
 
 
-# Install dependencies
-pip install -r requirements.txt
