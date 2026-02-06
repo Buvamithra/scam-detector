@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Scam Detector</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script>
+        function playSound(status) {
+            if (status === "🚨 SCAM") {
+                new Audio("{{ url_for('static', filename='scam.mp3') }}").play();
+            } else if (status === "⚠️ SUSPICIOUS") {
+                new Audio("{{ url_for('static', filename='suspicious.mp3') }}").play();
+            } else if (status === "✅ LIKELY SAFE") {
+                new Audio("{{ url_for('static', filename='safe.mp3') }}").play();
+            }
+        }
+    </script>
+</head>
+
+<body {% if result %} onload="playSound('{{ result.status }}')" {% endif %}>
+
+<div class="container">
+    <h1>🔥 AI Scam Detection System</h1>
+    <p class="subtitle">Detect fraud before it detects you</p>
+
+    <form method="POST">
+        <input type="email" name="email" placeholder="Sender Email" required>
+        <input type="text" name="company" placeholder="Company Name">
+        
+        <select name="money">
+            <option value="no">Asked for Money? ❌</option>
+            <option value="yes">Asked for Money? 💸</option>
+        </select>
+
+        <textarea name="message" placeholder="Paste the message content here..." required></textarea>
+
+        <button type="submit">🔍 Check Scam</button>
+    </form>
+
+    {% if result %}
+    <div class="result-card {{ result.status }}">
+        <img src="{{ url_for('static', filename='icons/' +
+            ('stop.jpeg' if result.status == '🚨 SCAM'
+            else 'alert.jpeg' if result.status == '⚠️ SUSPICIOUS'
+            else 'safezone.jpeg')) }}">
+
+        <h2>{{ result.status }}</h2>
+        <h3>Scam Score: {{ result.score }}%</h3>
+
+        <ul>
+            {% for reason in result.reasons %}
+                <li>{{ reason }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
